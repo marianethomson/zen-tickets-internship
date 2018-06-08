@@ -16,8 +16,8 @@ This project is deployed at <a href>ticket-viewer-zendesk.herokuapp.com</a>.
 # How to run locally:
 
 1. First, clone the repository to your local machine.
-# 2. Run bundle to install the dependencies.
-# 3. Run rails s to start the server
+2. Run bundle to install the dependencies.
+3. Run rails s to start the server
 4. The application will be available at http://localhost:3000/ 
 
 # License:
