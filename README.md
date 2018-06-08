@@ -1,6 +1,6 @@
 # zen-tickets-internship
 
-This project is a simple ticket viewer to connect with the Zendesk API, using Sinatra.
+This project is a simple ticket viewer to connect with the Zendesk API, using Rails.
 
 # Features:
 The ticket viewer allows you to:
@@ -24,4 +24,4 @@ This project is deployed at <a href>ticket-viewer-zendesk.herokuapp.com</a>.
 The source code is released under the MIT License.
 
 # Design Decisions and General Comments:
-I decided to use a web-framework to avoid dealing with some low level details and focus on the application code itself. Despite having used Rails for a previous Zendesk coding challenge, I decided to change the framework to Sinatra due to its strenghts, in special its simplicity to catch data. I realize now that Rails would be better fit for a larger application, or one that require some database manipulation.
+I decided to use a web-framework to avoid dealing with some low level details and focus on the application code itself. Despite Rails is a potent framework, probably more suited for a larger project, I decided to keep it. I tried to use Sinatra but I was losing a lot of time making things that work in Rails work again in Sinatra, instead of refactoring my code. So, I decided for Rails to use my development time for a better code in a framework I'm more used to.
