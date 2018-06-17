@@ -1,34 +1,30 @@
-require_relative './ticket.rb'
+require_relative 'ticket.rb'
 
 class TicketsController
+  include HTTParty::Error, with: :error
 
-  def ticket_list(page, tickets)
-      @page = params[:page] || 1
-      result = Ticket::show_tickets(tickets)
-      @tickets = result[:tickets]
-  end    
-
-  def next_page(page, number_of_pages)
-    if page <= number_of_pages
-      next_page = page + 1
-    else
-      puts "There are no more pages to show."
-    end
+  def list_tickets
+    result = Ticket.ticket_list(@formatted_page)
+    @tickets = result[:tickets]
   end
-    
-  def previous_page(page_number_of_pages)
-    if number_of_pages > 1
-      previous_page = page - 1
-    else
-      puts "There is no previous previous page."
+
+  def next_page
+    if @page.to_i < @number_of_pages
+      @page.to_i + 1 
     end
   end
 
-  def ticket(id)
-    if not @tickets
-      puts "There is no ticket with this id. Please try again."
-    else
-      @ticket = Ticket::show_ticket(params[:id])
+  def previous_page
+    if @number_of_pages.to_i - 1 >= 1 
+      @page.to_i - 1 
     end
+  end
+
+  def ticket
+    @ticket = Ticket.single_ticket(params[:id])
+  end
+
+  def error
+    puts 'Ops, something went wrong. Please try again.'
   end
 end

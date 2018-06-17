@@ -1,31 +1,55 @@
-require 'net/http'
+require 'httparty'
 
 class TicketRequest
 
-  SUBDOMAIN="internship2018"
   EMAIL='marianedinis@gmail.com'
   PASSWORD='codingchallenge2018'
 
-  ERROR_MESSAGE = 'Ops, something went wrong. Please try again.'
+  def initialize
+    @auth = { username: EMAIL,
+              password: PASSWORD }
+  end
 
-  def url(endpoint)
-    URI("https://#{SUBDOMAIN}.zendesk.com/api/v2/#{endpoint}")
+  BASE_URL = "https://internship2018.zendesk.com/api/v2/"
+
+  def tickets(page)
+    page = params[:page] || 1
+    response = connection(BASE_URL+"tickets.json?page=#{page}&sort_by=id&sort_order=desc")
+    tickets = response['tickets']
+
+    { tickets: tickets.map { |ticket| new_ticket (ticket) },
+      page: page,
+      count: response['count'] }
+  end
+
+  def ticket(id)
+    ticket = connection(BASE_URL+"tickets/#{id}.json")['ticket']
+    new_ticket(ticket)
   end
 
   private
 
-  def get(endpoint)
-    uri = url(endpoint)
-    Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
-      request = Net::HTTP::Get.new(uri)
-      request.basic_auth EMAIL, PASSWORD
-      status = http.status
-        if response.status.to_i === 200
-          response = http.request request
-        return response
-        else
-          puts ERROR_MESSAGE + status   
-        end
+  def connection(url)
+    begin
+      response = HTTParty.get(url, basic_auth: @auth)
+    rescue Timeout::Error, Errno::ECONNRESET, Errno::EINVAL,
+        Errno::ECONNRESET, EOFError, Net::HTTPBadResponse,
+        Net::HTTPHeaderSyntaxError, Net::ProtocolError,SocketError => e
+      raise HTTParty::Error.new(e.message)
     end
-  end  
+    raise HTTParty::Error.new('Bad response') unless response.success?
+    response
+  end
+
+
+  def new_ticket(ticket)
+    Ticket.new(ticket['id'],
+               ticket['subject'],
+               ticket['description'],
+               ticket['requester_id'],
+               ticket['assignee_id'],
+               ticket['created_at'],
+               ticket['updated_at'],
+               ticket['status'])
+  end
 end
